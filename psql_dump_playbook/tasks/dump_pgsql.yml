@@ -1,0 +1,21 @@
+---
+
+    # 1 - Create backup folder if it's not available
+  - name: create temporary backup folder
+    file:
+       path: "/mnt/s3/psql_backup/"
+       state: directory
+
+    # 2 - Filter databases
+  - name: register database name into output
+    shell: 'psql -U {{ dbuser }} -h {{ dbhost }} -p {{ dbport }} -c "SELECT datname FROM pg_database WHERE datistemplate = false;" -A -t'
+    register: dblistprod
+    environment:
+      PGPASSWORD: '{{ dbpass }}'
+
+    # 3 - Start dump databases from list in step 2
+  - name: dump pgsql databases
+    shell: 'pg_dump -Fc -h {{ dbhost }} -p {{ dbport }} -U {{ dbuser }} {{ item }} -f /mnt/s3/psql_backup/{{ ansible_date_time.iso8601 }}_{{ item }}.backup'
+    with_items: "{{ dblistprod.stdout_lines }}"
+    environment:
+      PGPASSWORD: '{{ dbpass }}'

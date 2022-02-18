@@ -1,0 +1,4 @@
+dbuser: postgres
+dbpass: docker
+dbport: 5432
+dbhost: 84.201.173.253
