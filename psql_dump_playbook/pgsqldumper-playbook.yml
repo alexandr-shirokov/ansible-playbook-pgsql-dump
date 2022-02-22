@@ -2,10 +2,10 @@
 
 ---
 - name: ansible pgsql dump
-  hosts: pgsql
   gather_facts: yes
+  hosts: psql-work
   become: yes
-
+  
   vars_files:
     - vars/main.yml
 

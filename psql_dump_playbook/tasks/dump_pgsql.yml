@@ -16,6 +16,6 @@
     # 3 - Start dump databases from list in step 2
   - name: dump pgsql databases
     shell: 'pg_dump -Fc -h {{ dbhost }} -p {{ dbport }} -U {{ dbuser }} {{ item }} -f /mnt/s3/psql_backup/{{ ansible_date_time.iso8601 }}_{{ item }}.backup'
-    with_items: "{{ dblistprod.stdout_lines }}"
+    with_items: "{{ db_dump | default(dblistprod.stdout_lines) }}"
     environment:
       PGPASSWORD: '{{ dbpass }}'
